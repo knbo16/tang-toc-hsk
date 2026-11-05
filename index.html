@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tăng Tốc HSK</title>
+<style>
+:root{--bg:#fff3f7;--card:#fff;--pink:#f7c0d3;--pinkd:#e0709a;--text:#5b3a4a;--sub:#a07888;--ok:#bfe8cc;--bad:#f8c4c4;--line:#f5dbe5;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a1a22;--card:#3a2630;--pink:#6b3a50;--pinkd:#f08fb4;--text:#fbe6ee;--sub:#c9a0b0;--ok:#2f5a40;--bad:#6a3036;--line:#4d3340;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#2a1a22;--card:#3a2630;--pink:#6b3a50;--pinkd:#f08fb4;--text:#fbe6ee;--sub:#c9a0b0;--ok:#2f5a40;--bad:#6a3036;--line:#4d3340;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans SC","PingFang SC",sans-serif;min-height:100vh;display:flex;justify-content:center}
+main{width:100%;max-width:460px;padding:20px 16px}
+h1{text-align:center;color:var(--pinkd);margin:8px 0 4px;font-size:28px}
+.sub{text-align:center;color:var(--sub);margin:0 0 18px;font-size:14px}
+.card{background:var(--card);border-radius:20px;padding:18px;border:1px solid var(--line);box-shadow:0 4px 14px rgba(224,112,154,.12);margin-bottom:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+button{font:inherit;color:inherit;cursor:pointer;border:2px solid var(--line);background:var(--card);border-radius:14px;padding:14px 10px;transition:transform .08s}
+button:active{transform:scale(.97)}
+.lv{font-weight:700;font-size:18px}.lv:hover{border-color:var(--pinkd);background:var(--pink)}
+.pri{background:var(--pinkd);color:#fff;border-color:var(--pinkd);font-weight:700;width:100%}
+.hide{display:none!important}
+.top{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.bar{height:10px;border-radius:9px;background:var(--line);overflow:hidden;margin:10px 0}
+.bar i{display:block;height:100%;width:100%;background:var(--pinkd);transition:width .25s linear}
+.combo{text-align:center;min-height:24px;color:var(--pinkd);font-weight:700}
+.q{text-align:center}.q .big{font-size:42px;font-weight:700;margin:6px 0}.q .big.sm{font-size:26px}.q .hint{color:var(--sub);font-size:14px}
+.opts{display:grid;gap:10px}.opts button{font-size:20px}
+.opts .ok{background:var(--ok);border-color:#6cc58b}.opts .bad{background:var(--bad);border-color:#e57d7d}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}.stats b{display:block;font-size:26px;color:var(--pinkd)}.stats span{font-size:12px;color:var(--sub)}
+.wl{max-height:260px;overflow-y:auto}.wl div{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.wl em{font-style:normal;color:var(--sub);font-size:13px}
+.praise{text-align:center;background:var(--pink);animation:pop .5s ease}.praise b{display:block;font-size:20px;color:var(--pinkd);margin-bottom:4px}@keyframes pop{0%{transform:scale(.8);opacity:0}70%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+.row{display:flex;gap:10px}.row button{flex:1}
+</style>
+</head>
+<body>
+<main>
+<section id="home">
+<h1>🌸 Tăng Tốc HSK</h1>
+<p class="sub">Chọn cấp độ rồi chơi ngay, không cần đăng nhập</p>
+<div class="card"><div class="grid" id="lvs"></div></div>
+<div class="card" style="font-size:14px;line-height:1.6">⏱ 60 giây trả lời càng nhiều càng tốt<br>🔥 Đúng liên tiếp để tạo combo và nhân điểm<br>💗 Có 3 trái tim, sai một câu mất một tim<br>📝 Cuối lượt xem lại các từ đã làm sai</div>
+</section>
+<section id="game" class="hide">
+<div class="top"><span id="hearts"></span><span id="time">60</span><span id="score">0</span></div>
+<div class="bar"><i id="fill"></i></div>
+<div class="combo" id="combo"></div>
+<div class="card q"><div class="hint" id="qhint"></div><div class="big" id="qmain"></div><div class="hint" id="qsub"></div><button id="replay" class="hide" style="margin-top:8px">🔊 Nghe lại</button></div>
+<div class="opts" id="opts"></div>
+</section>
+<section id="end" class="hide">
+<h1>Hết lượt rồi!</h1>
+<p class="sub" id="elv"></p>
+<div class="card praise"><b id="pTitle"></b><span id="pMsg"></span></div>
+<div class="card"><div class="stats"><div><b id="eScore">0</b><span>Điểm</span></div><div><b id="eOk">0</b><span>Câu đúng</span></div><div><b id="eStreak">0</b><span>Chuỗi dài nhất</span></div></div><p class="sub" id="best" style="margin:12px 0 0"></p></div>
+<div class="card"><b>Từ cần ôn lại</b><div class="wl" id="wl"></div></div>
+<div class="row"><button id="again" class="pri">Chơi lại</button><button id="menu">Đổi cấp độ</button></div>
+</section>
+</main>
+<script>
+const D={
+1:"你好|nǐ hǎo|xin chào;谢谢|xièxie|cảm ơn;学校|xuéxiào|trường học;朋友|péngyou|bạn bè;喜欢|xǐhuan|thích;水|shuǐ|nước;老师|lǎoshī|giáo viên;学生|xuésheng|học sinh;今天|jīntiān|hôm nay;明天|míngtiān|ngày mai;漂亮|piàoliang|xinh đẹp;买|mǎi|mua;家|jiā|nhà;书|shū|sách;钱|qián|tiền;好吃|hǎochī|ngon",
+2:"终于|zhōngyú|cuối cùng;走路|zǒu lù|đi bộ;非常|fēicháng|rất;经常|jīngcháng|thường xuyên;便宜|piányi|rẻ;旅游|lǚyóu|du lịch;开始|kāishǐ|bắt đầu;觉得|juéde|cảm thấy;一起|yìqǐ|cùng nhau;回答|huídá|trả lời;为什么|wèishénme|tại sao;房间|fángjiān|phòng;告诉|gàosu|nói cho biết;运动|yùndòng|vận động;干净|gānjìng|sạch sẽ;离|lí|cách",
+3:"突然|tūrán|đột nhiên;已经|yǐjīng|đã;担心|dānxīn|lo lắng;满意|mǎnyì|hài lòng;比赛|bǐsài|cuộc thi;影响|yǐngxiǎng|ảnh hưởng;简单|jiǎndān|đơn giản;办法|bànfǎ|cách làm;打扫|dǎsǎo|quét dọn;年轻|niánqīng|trẻ;周末|zhōumò|cuối tuần;环境|huánjìng|môi trường;注意|zhùyì|chú ý;最后|zuìhòu|cuối cùng;习惯|xíguàn|thói quen;为了|wèile|để",
+4:"经验|jīngyàn|kinh nghiệm;增加|zēngjiā|tăng thêm;积累|jīlěi|tích lũy;保证|bǎozhèng|đảm bảo;犹豫|yóuyù|do dự;估计|gūjì|ước tính;缺点|quēdiǎn|khuyết điểm;优点|yōudiǎn|ưu điểm;判断|pànduàn|phán đoán;适合|shìhé|phù hợp;解决|jiějué|giải quyết;理解|lǐjiě|thấu hiểu;获得|huòdé|đạt được;打算|dǎsuan|dự định;无论|wúlùn|bất kể;安排|ānpái|sắp xếp",
+5:"逐渐|zhújiàn|dần dần;吸引|xīyǐn|thu hút;导致|dǎozhì|dẫn đến;趋势|qūshì|xu hướng;缓解|huǎnjiě|giảm bớt;承担|chéngdān|đảm nhận;尊重|zūnzhòng|tôn trọng;营养|yíngyǎng|dinh dưỡng;挑战|tiǎozhàn|thách thức;密切|mìqiè|mật thiết;体验|tǐyàn|trải nghiệm;珍惜|zhēnxī|trân trọng;违反|wéifǎn|vi phạm;贡献|gòngxiàn|cống hiến;遗憾|yíhàn|tiếc nuối;总结|zǒngjié|tổng kết",
+6:"荒谬|huāngmiù|vô lý;倾向|qīngxiàng|khuynh hướng;谨慎|jǐnshèn|thận trọng;繁荣|fánróng|phồn vinh;违背|wéibèi|trái với;滋味|zīwèi|hương vị;挑剔|tiāotī|xét nét;坚韧|jiānrèn|kiên cường;惭愧|cánkuì|hổ thẹn;淘汰|táotài|đào thải;敏锐|mǐnruì|nhạy bén;恰当|qiàdàng|thích đáng;衰退|shuāituì|suy thoái;宽容|kuānróng|khoan dung;杰出|jiéchū|xuất sắc;迫切|pòqiè|cấp bách"};
+const C={
+1:"我想___一本书。|买;这个苹果很___。|好吃;我是___。|学生;我在___吃饭。|家",
+2:"我每天___去学校。|走路;这件衣服很___。|便宜;我们___去玩吧。|一起;他___去运动。|经常",
+3:"这个问题很___。|简单;请___安全。|注意;我___打扫完了。|已经;别___，没问题。|担心",
+4:"这个工作很___你。|适合;我们要___这个问题。|解决;我___明天会下雨。|估计;他做事总是很___。|犹豫",
+5:"天气___变冷了。|逐渐;我们应该___别人。|尊重;熬夜会___疲劳。|导致;要___现在的生活。|珍惜",
+6:"他的想法太___了。|荒谬;做决定要___。|谨慎;他是一位___的科学家。|杰出;请用___的词语。|恰当"};
+const $=id=>document.getElementById(id);
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
+let lv=1,W=[],CL=[],S,timer,lock,qn=0;
+function load(l){lv=l;W=D[l].split(";").map(s=>s.split("|"));CL=C[l].split(";").map(s=>s.split("|"))}
+function show(id){["home","game","end"].forEach(x=>$(x).classList.toggle("hide",x!==id))}
+for(let i=1;i<=6;i++){const b=document.createElement("button");b.className="lv";b.textContent="HSK "+i;b.onclick=()=>start(i);$("lvs").appendChild(b)}
+$("again").onclick=()=>start(lv);$("menu").onclick=()=>show("home");
+const canSpeak=()=>"speechSynthesis" in window&&speechSynthesis.getVoices().some(v=>/^zh/i.test(v.lang));
+function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="zh-CN";u.rate=.8;speechSynthesis.speak(u)}catch(e){}}
+if("speechSynthesis" in window)speechSynthesis.getVoices();
+function start(l){load(l);S={score:0,combo:0,streak:0,ok:0,hearts:3,t:60,wrong:{}};qn=0;show("game");hud();clearInterval(timer);timer=setInterval(()=>{S.t--;hud();if(S.t<=0)finish()},1000);next()}
+function hud(){$("hearts").textContent="💗".repeat(S.hearts)+"🤍".repeat(3-S.hearts);$("time").textContent="⏱ "+S.t;$("score").textContent="⭐ "+S.score;$("fill").style.width=(S.t/60*100)+"%";$("combo").textContent=S.combo>=2?"🔥 Combo x"+S.combo:""}
+function others(w,i,n){return shuf(W.filter(x=>x[0]!==w[0])).slice(0,n)}
+function next(){
+  lock=false;const types=[0,1,3];if(canSpeak())types.push(2);
+  let t=types[qn++%types.length];if(qn>1&&Math.random()<.35)t=rnd(types);
+  let w,opts,main,hint,sub="",sm=false;$("replay").classList.add("hide");
+  if(t===3){const c=rnd(CL);w=W.find(x=>x[0]===c[1]);main=c[0];sm=true;hint="Chọn từ còn thiếu";opts=[w,...others(w,0,2)].map(x=>({l:x[0],ok:x===w}))}
+  else{w=rnd(W);const o=[w,...others(w,0,2)];
+    if(t===0){main=w[0];sub=w[1];hint="Chọn nghĩa tiếng Việt";opts=o.map(x=>({l:x[2],ok:x===w}))}
+    if(t===1){main=w[2];sm=true;hint="Chọn chữ Hán đúng";opts=o.map(x=>({l:x[0],ok:x===w}))}
+    if(t===2){main="🔊";hint="Nghe và chọn từ đúng";opts=o.map(x=>({l:x[0],ok:x===w}));$("replay").classList.remove("hide");$("replay").onclick=()=>speak(w[0]);speak(w[0])}}
+  $("qhint").textContent=hint;$("qmain").textContent=main;$("qmain").classList.toggle("sm",sm);$("qsub").textContent=sub;
+  $("opts").innerHTML="";shuf(opts).forEach(o=>{const b=document.createElement("button");b.textContent=o.l;b.dataset.ok=o.ok?1:0;b.onclick=()=>answer(b,o.ok,w);$("opts").appendChild(b)})}
+function answer(b,ok,w){
+  if(lock||S.t<=0)return;lock=true;
+  if(ok){b.classList.add("ok");S.combo++;S.ok++;S.streak=Math.max(S.streak,S.combo);S.score+=10+Math.min(S.combo-1,10)*2}
+  else{b.classList.add("bad");[...$("opts").children].forEach(x=>{if(x.dataset.ok==="1")x.classList.add("ok")});S.combo=0;S.hearts--;S.wrong[w[0]]=w}
+  hud();
+  setTimeout(()=>{if(S.hearts<=0)finish();else if(S.t>0)next()},ok?250:900)}
+function finish(){
+  clearInterval(timer);try{speechSynthesis.cancel()}catch(e){}
+  $("elv").textContent="HSK "+lv;
+  const n=S.ok,m=n>=15?"Khôi Nguyên cúi chào! Bạn đỉnh thật sự, đúng là học bá chính hiệu!":n>=10?"Khôi Nguyên nể phục bạn luôn! Phản xạ nhanh như chớp!":n>=5?"Khôi Nguyên gật gù khen: bạn đang vào phom rồi đó!":"Khôi Nguyên bảo: khởi đầu đẹp lắm, thêm một lượt nữa là lên hạng!";
+  $("pTitle").textContent="🏆 Chúc mừng bạn hoàn thành HSK "+lv+"!";$("pMsg").textContent=m;$("eScore").textContent=S.score;$("eOk").textContent=S.ok;$("eStreak").textContent=S.streak;
+  let b=0,k="hsk_best_"+lv;try{b=+localStorage.getItem(k)||0;if(S.score>b){b=S.score;localStorage.setItem(k,b)}}catch(e){if(S.score>b)b=S.score}
+  $("best").textContent="Điểm cao nhất HSK "+lv+": "+b;
+  const ws=Object.values(S.wrong);$("wl").innerHTML=ws.length?"":"<div>Không sai từ nào, giỏi quá! 🎉</div>";
+  ws.forEach(w=>{const d=document.createElement("div");const l=document.createElement("span");l.textContent=w[0]+"  ";const e=document.createElement("em");e.textContent=w[1];l.appendChild(e);const r=document.createElement("span");r.textContent=w[2];d.append(l,r);$("wl").appendChild(d)});
+  show("end")}
+</script>
+</body>
+</html>
